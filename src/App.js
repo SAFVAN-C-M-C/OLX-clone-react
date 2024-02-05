@@ -1,9 +1,25 @@
-
+import { Route, Routes } from "react-router-dom";
+import Home from "./pages/Home";
+import SignUp from "./pages/SignUp";
+import Login from "./pages/Login";
+import AddProduct from "./pages/AddProduct";
+import NavBar from "./components/NavBar";
+import { AuthContextProvider } from "./context/AuthContext";
 function App() {
   return (
-    <div className="w-full h-screen flex items-center justify-center">
-      <h1 className=" ">hi</h1>
-    </div>
+    <>
+      <AuthContextProvider>
+
+        <NavBar />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/add-product" element={<AddProduct />} />
+        </Routes>
+
+      </AuthContextProvider>
+    </>
   );
 }
 
