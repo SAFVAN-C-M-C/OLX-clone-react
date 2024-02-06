@@ -17,19 +17,20 @@ const SignUp = () => {
   const nameRef = useRef(null);
   const emailRef = useRef(null);
   const passwordRef = useRef(null);
-
+  const phoneRef =useRef(null)
   const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
-  const [isExistingUser, setIsExistingUser] = useState('');
-  const [userNameState, setUserNameState] = useState('');
-  const [passwordState, setPasswordState] = useState('');
-  const [emailState, setEmailState] = useState('');
+  const [phoneNumber,setPhoneNumber]=useState('')
+  const [isExistingUser, setIsExistingUser] = useState("");
+  const [userNameState, setUserNameState] = useState("");
+  const [passwordState, setPasswordState] = useState("");
+  const [emailState, setEmailState] = useState("");
+  const [phoneState, setPhoneState] = useState("");
 
   const validateUserName = (name) => {
     const regex = /^[a-zA-Z\s]+$/;
-    if (name.trim().length <4 || !regex.test(name)) {
+    if (name.trim().length < 4 || !regex.test(name)) {
       return false;
     }
     return true;
@@ -38,33 +39,45 @@ const SignUp = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   }
-
+function isValidNumber(phoneNumber){
+  const phoneNumberPattern = /^\+?\d{0,4}\d{10}$/;
+  return phoneNumberPattern.test(phoneNumber)
+}
   const handleSubmit = async (e) => {
-    if(!isValidEmail(email)){
-        setEmailState("Enter a proper email");
-        emailRef.current.focus()
-        setTimeout(() => {
-            setEmailState('');
-        }, 3000);
-        return
-    }
-    if(!validateUserName(userName)){
-        setUserNameState("Enter a proper name");
-        nameRef.current.focus()
-        setTimeout(() => {
-            setUserNameState('');
-        }, 3000);
-        return
-    }
-    if(password.length<6){
-        setPasswordState("Password must be more than 6 charecters")
-        passwordRef.current.focus();
-        setTimeout(() => {
-            setPasswordState('');
-        }, 3000);
-        return
-    }
     e.preventDefault();
+    if (!isValidEmail(email)) {
+      setEmailState("Enter a proper email");
+      emailRef.current.focus();
+      setTimeout(() => {
+        setEmailState("");
+      }, 3000);
+      return;
+    }
+    if (!validateUserName(userName)) {
+      setUserNameState("Enter a proper name");
+      nameRef.current.focus();
+      setTimeout(() => {
+        setUserNameState("");
+      }, 3000);
+      return;
+    }
+    if (password.length < 6) {
+      setPasswordState("Password must be more than 6 charecters");
+      passwordRef.current.focus();
+      setTimeout(() => {
+        setPasswordState("");
+      }, 3000);
+      return;
+    }
+    if(!isValidNumber(phoneNumber)){
+      setPhoneState("Enter valid phone number with country code");
+      phoneRef.current.focus();
+      setTimeout(()=>{
+        setPhoneState('');
+      },3000)
+      return
+    }
+
     try {
       const userCredential = await signUp(email, password);
       console.log(userCredential.user, "usercredential in signup");
@@ -72,6 +85,7 @@ const SignUp = () => {
       const userData = {
         Username: userName,
         Email: email,
+        Phone:phoneNumber,
         Password: password,
         CreatedAt: date,
       };
@@ -96,18 +110,18 @@ const SignUp = () => {
         setEmailState("invalid email");
         emailRef.current.focus();
         setTimeout(() => {
-          setEmailState('');
+          setEmailState("");
         }, 3000);
       } else if (errorCode === "auth/weak-password") {
-        setPasswordState('weak password');
+        setPasswordState("weak password");
         passwordRef.current.focus();
         setTimeout(() => {
-          setPasswordState('');
+          setPasswordState("");
         }, 3000);
       } else if (errorCode === "auth/email-already-in-use") {
-        setIsExistingUser('email already in use');
+        setIsExistingUser("email already in use");
         setTimeout(() => {
-          setIsExistingUser('');
+          setIsExistingUser("");
         }, 3000);
       } else {
         console.log("an error occurred:", errorMessage);
@@ -127,10 +141,12 @@ const SignUp = () => {
           </button>
           <div className="max-w-[320px] mx-auto py-16">
             <h1 className="text-3xl md:text-4xl font-bold">Sign Up</h1>
-            {isExistingUser ? <p className="p-2 my-2 bg-red-500">{isExistingUser}</p> : null}
+            {isExistingUser ? (
+              <p className="p-2 my-2 bg-red-500">{isExistingUser}</p>
+            ) : null}
             <form onSubmit={handleSubmit} className="w-full flex flex-col py-4">
-            <input
-            ref={nameRef}
+              <input
+                ref={nameRef}
                 required
                 onChange={(e) => {
                   setUserName(e.target.value);
@@ -141,10 +157,10 @@ const SignUp = () => {
                 autoComplete="name"
               />
               {userNameState && (
-                  <p className="text-xs text-gray-400">{userNameState}</p>
-                )}
+                <p className="text-xs text-red-600">{userNameState}</p>
+              )}
               <input
-              ref={emailRef}
+                ref={emailRef}
                 required
                 onChange={(e) => {
                   setEmail(e.target.value);
@@ -155,10 +171,24 @@ const SignUp = () => {
                 autoComplete="email"
               />
               {emailState && (
-                  <p className="text-xs text-gray-400">{emailState}</p>
-                )}
+                <p className="text-xs text-red-600">{emailState}</p>
+              )}
               <input
-              ref={passwordRef}
+                ref={phoneRef}
+                required
+                onChange={(e) => {
+                  setPhoneNumber(e.target.value);
+                }}
+                className="p-3 my-2 bg-gray-50 rounded"
+                placeholder="Phone number"
+                type="tel"
+                autoComplete="tel"
+              />
+              {phoneState && (
+                <p className="text-xs text-red-600">{phoneState}</p>
+              )}
+              <input
+                ref={passwordRef}
                 required
                 onChange={(e) => {
                   setPassword(e.target.value);
@@ -168,9 +198,9 @@ const SignUp = () => {
                 type="password"
                 autoComplete="current-password"
               />
-                {passwordState && (
-                  <p className="text-xs text-gray-400">{passwordState}</p>
-                )}
+              {passwordState && (
+                <p className="text-xs text-red-600">{passwordState}</p>
+              )}
               {/* <input
                 required
                 onChange={(e)=>{
@@ -185,11 +215,9 @@ const SignUp = () => {
               <button className="bg-blue-500 text-white py-3 my-6 rounded font-bold">
                 Sign Up
               </button>
-              
+
               <p className="py-8">
-                <span className="text-gray-500">
-                  Already have an Account?
-                </span>
+                <span className="text-gray-500">Already have an Account?</span>
                 <Link to="/login"> Sign In</Link>
               </p>
             </form>

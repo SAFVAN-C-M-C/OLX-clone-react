@@ -3,9 +3,9 @@ import toast, { Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { FiChevronDown, FiChevronUp, FiMapPin, FiSearch } from "react-icons/fi";
 import { BiTargetLock, BiCheck, BiPlus } from "react-icons/bi";
-import { UserAuth } from "../context/AuthContext";
+import { UserAuth } from "../../context/AuthContext";
 
-const NavBar = () => {
+export const NavBar = () => {
   const { user,SignOut } = UserAuth();
   //states
   const [dropDownActive, setDropDownActive] = useState(false);
@@ -45,7 +45,7 @@ const NavBar = () => {
 
   return (
     <>
-      <nav className="flex px-10 py-2  bg-gray-100 items-center border-b-4 border-white shadow z-20 fixed w-full">
+      <nav className="flex px-10 py-2 top-0 bg-gray-100 items-center border-b-4 border-white shadow z-50 fixed w-full">
         <Toaster />
         <div>
           <img
@@ -197,4 +197,4 @@ const NavBar = () => {
   );
 };
 
-export default NavBar;
+
